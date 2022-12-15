@@ -1,0 +1,16 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+    commands:
+      - echo Entered the install phase...
+      - apt-get -qq update && apt-get -qq install curl
+      - cp ./settings.xml ~/.m2/settings.xml
+  pre_build:
+    commands:
+      - export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain my-domain --domain-owner 676272199261 --query authorizationToken --output text`
+      - echo $CODEARTIFACT_AUTH_TOKEN 
+      - cat ~/.m2/settings.xml
+      - mvn test
+      - codebuild-breakpoint
